@@ -51,6 +51,7 @@ func main() {
 	mux.HandleFunc("GET /accounts/{id}", httpHandler.GetAccount)
 	mux.HandleFunc("PATCH /accounts/{id}", httpHandler.Deposit)
 	mux.HandleFunc("POST /accounts", httpHandler.CreateAccount)
+	mux.HandleFunc("GET /users/{id}/account", httpHandler.GetUsersAccount)
 	mux.Handle("/swagger/payment/", httpSwagger.WrapHandler)
 	messageBus := kafka.NewMessageBus(cfg.KafkaBrokers, cfg.KafkaConsumerTopic, cfg.KafkaProducerTopic, cfg.KafkaGroupID)
 	kafkaHandler := kafkahandler.NewPaymentHandler(paymentService)

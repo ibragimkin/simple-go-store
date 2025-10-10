@@ -3,6 +3,7 @@ package httphandler
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"payment-service/internal/application/service"
@@ -51,23 +52,24 @@ func (h *AccountHandler) GetAccount(w http.ResponseWriter, r *http.Request) {
 
 // Deposit godoc
 // @Param id path int true "account id"
-// @Param amount query number true "amount"
+// @Param amount body DepositRequest true "Deposit amount"
 // @Success 200 {object} interface{}
 // @Router /accounts/{id} [patch]
 func (h *AccountHandler) Deposit(w http.ResponseWriter, r *http.Request) {
-	idStr := r.PathValue("id") // Extract path parameter
+	idStr := r.PathValue("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		http.Error(w, "Invalid ID format", http.StatusBadRequest)
 		return
 	}
-	amountStr := r.URL.Query().Get("amount")
-	amount, err := strconv.ParseFloat(amountStr, 64)
+	depositRequest := DepositRequest{}
+	err = json.NewDecoder(r.Body).Decode(&depositRequest)
 	if err != nil {
-		http.Error(w, "Invalid amount", http.StatusBadRequest)
+		http.Error(w, "Invalid input format", http.StatusBadRequest)
 		return
 	}
-	err = h.accountService.Deposit(h.ctx, id, amount)
+
+	err = h.accountService.Deposit(h.ctx, id, depositRequest.Amount)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -75,22 +77,20 @@ func (h *AccountHandler) Deposit(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-// CreateAccount
-// @Param user_id query int true "user id"
+// CreateAccount godoc
+// @Summary Create account
+// @Description Creates a new account
+// @Param data body CreateAccountRequest true "Account info"
 // @Success 201 {object} interface{}
 // @Router /accounts [post]
 func (h *AccountHandler) CreateAccount(w http.ResponseWriter, r *http.Request) {
-	userIdStr := r.URL.Query().Get("user_id")
-	if userIdStr == "" {
-		http.Error(w, "Missing user_id", http.StatusBadRequest)
-		return
-	}
-	userId, err := strconv.Atoi(userIdStr)
+	createRequest := CreateAccountRequest{}
+	err := json.NewDecoder(r.Body).Decode(&createRequest)
 	if err != nil {
-		http.Error(w, "Invalid user id format", http.StatusBadRequest)
+		http.Error(w, "Invalid input format", http.StatusBadRequest)
 		return
 	}
-	account, err := h.accountService.CreateAccount(h.ctx, userId)
+	account, err := h.accountService.CreateAccount(h.ctx, createRequest.UserId)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -100,4 +100,52 @@ func (h *AccountHandler) CreateAccount(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Failed to encode account to JSON: %v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+}
+
+// GetUsersAccount
+// @Summary Get users account by id
+// @Param        id   path      int  true  "User ID"
+// @Param data body GetByUserIdRequest true "Get by users id"
+// @Success 201 {object} interface{}
+// @Router /users/{id}/account [get]
+func (h *AccountHandler) GetUsersAccount(w http.ResponseWriter, r *http.Request) {
+	userId, err := getIntPathValue(r, "id")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	account, err := h.accountService.GetUsersAccount(h.ctx, userId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	err = json.NewEncoder(w).Encode(account)
+	if err != nil {
+		log.Printf("Failed to encode account to JSON: %v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func getIntPathValue(r *http.Request, key string) (int, error) {
+	valueStr := r.PathValue(key)
+	if valueStr == "" {
+		return 0, fmt.Errorf("%s not provided", key)
+	}
+	valueInt, err := strconv.Atoi(valueStr)
+	if err != nil {
+		return 0, fmt.Errorf("invalid %s format", key)
+	}
+	return valueInt, nil
+}
+
+type CreateAccountRequest struct {
+	UserId int `json:"user_id"`
+}
+
+type DepositRequest struct {
+	Amount float64 `json:"amount"`
+}
+
+type GetByUserIdRequest struct {
+	UserId int `json:"user_id"`
 }

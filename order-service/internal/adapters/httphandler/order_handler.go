@@ -122,7 +122,7 @@ func (h *OrderHandler) PayOrder(w http.ResponseWriter, r *http.Request) {
 // @Success 200 {object} interface{}
 // @Router /users/{id}/orders [get]
 func (h *OrderHandler) GetUserOrders(w http.ResponseWriter, r *http.Request) {
-	userId, err := getIntQueryValue(r, "id")
+	userId, err := getIntPathValue(r, "id")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -152,7 +152,7 @@ func getIntPathValue(r *http.Request, key string) (int, error) {
 }
 
 func getIntQueryValue(r *http.Request, key string) (int, error) {
-	valueStr := r.PathValue(key)
+	valueStr := r.URL.Query().Get(key)
 	if valueStr == "" {
 		return 0, fmt.Errorf("%s not provided", key)
 	}

@@ -9,7 +9,6 @@ import (
 	"net/url"
 )
 
-// создаём proxy для каждого микросервиса
 func newReverseProxy(target string) *httputil.ReverseProxy {
 	u, err := url.Parse(target)
 	if err != nil {
@@ -29,15 +28,16 @@ func main() {
 	orderProxy := newReverseProxy(cfg.OrderServiceURL)
 	paymentProxy := newReverseProxy(cfg.PaymentServiceURL)
 
-	// Группы маршрутов — всё, что начинается с /orders или /users/{id}/orders → order-service
 	r.Route("/orders", func(r chi.Router) {
-		r.Handle("/*", orderProxy) // проксирует всё, включая /orders/{id}
+		r.Handle("/*", orderProxy)
 	})
 	r.Route("/users/{id}/orders", func(r chi.Router) {
 		r.Handle("/*", orderProxy)
 	})
+	r.Route("/users/{id}/account", func(r chi.Router) {
+		r.Handle("/*", orderProxy)
+	})
 
-	// Всё, что начинается с /accounts → payment-service
 	r.Route("/accounts", func(r chi.Router) {
 		r.Handle("/*", paymentProxy)
 	})
@@ -46,12 +46,10 @@ func main() {
 		r.Handle("/*", paymentProxy)
 	})
 
-	// /swagger/order/* → order-service/swagger/*
 	r.Route("/swagger/order", func(r chi.Router) {
 		r.Handle("/*", orderProxy)
 	})
 
-	// Можно добавить health-check, чтобы удобно проверять доступность гейтвея
 	r.Get("/health", func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("ok"))

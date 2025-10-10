@@ -1,18 +1,37 @@
+definitions:
+  httphandler.CreateAccountRequest:
+    properties:
+      user_id:
+        type: integer
+    type: object
+  httphandler.DepositRequest:
+    properties:
+      amount:
+        type: number
+    type: object
+  httphandler.GetByUserIdRequest:
+    properties:
+      user_id:
+        type: integer
+    type: object
 info:
   contact: {}
 paths:
   /accounts:
     post:
+      description: Creates a new account
       parameters:
-      - description: user id
-        in: query
-        name: user_id
+      - description: Account info
+        in: body
+        name: data
         required: true
-        type: integer
+        schema:
+          $ref: '#/definitions/httphandler.CreateAccountRequest'
       responses:
         "201":
           description: Created
           schema: {}
+      summary: Create account
   /accounts/{id}:
     get:
       description: Возвращает информацию об аккаунте по ID
@@ -41,13 +60,33 @@ paths:
         name: id
         required: true
         type: integer
-      - description: amount
-        in: query
+      - description: Deposit amount
+        in: body
         name: amount
         required: true
-        type: number
+        schema:
+          $ref: '#/definitions/httphandler.DepositRequest'
       responses:
         "200":
           description: OK
           schema: {}
+  /users/{id}/account:
+    get:
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Get by users id
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/httphandler.GetByUserIdRequest'
+      responses:
+        "201":
+          description: Created
+          schema: {}
+      summary: Get users account by id
 swagger: "2.0"

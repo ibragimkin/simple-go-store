@@ -17,13 +17,17 @@ const docTemplate = `{
     "paths": {
         "/accounts": {
             "post": {
+                "description": "Creates a new account",
+                "summary": "Create account",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "user id",
-                        "name": "user_id",
-                        "in": "query",
-                        "required": true
+                        "description": "Account info",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/httphandler.CreateAccountRequest"
+                        }
                     }
                 ],
                 "responses": {
@@ -74,11 +78,13 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "number",
-                        "description": "amount",
+                        "description": "Deposit amount",
                         "name": "amount",
-                        "in": "query",
-                        "required": true
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/httphandler.DepositRequest"
+                        }
                     }
                 ],
                 "responses": {
@@ -86,6 +92,61 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {}
                     }
+                }
+            }
+        },
+        "/users/{id}/account": {
+            "get": {
+                "summary": "Get users account by id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Get by users id",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/httphandler.GetByUserIdRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {}
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "httphandler.CreateAccountRequest": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "httphandler.DepositRequest": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                }
+            }
+        },
+        "httphandler.GetByUserIdRequest": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "integer"
                 }
             }
         }
