@@ -1,0 +1,68 @@
+definitions:
+  httphandler.CreateOrderRequest:
+    properties:
+      item_id:
+        type: integer
+      price:
+        type: number
+      user_id:
+        type: integer
+    type: object
+info:
+  contact: {}
+paths:
+  /orders:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new order
+      parameters:
+      - description: Order info
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/httphandler.CreateOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema: {}
+      summary: Create order
+  /orders/{id}:
+    get:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema: {}
+    patch:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema: {}
+  /users/{id}/orders:
+    get:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema: {}
+swagger: "2.0"

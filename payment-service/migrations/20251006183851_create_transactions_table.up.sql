@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS transactions (
+    id INTEGER PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    is_deposit BOOLEAN NOT NULL,
+    amount NUMERIC(12,2) NOT NULL,
+    date TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );

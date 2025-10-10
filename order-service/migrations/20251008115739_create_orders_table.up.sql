@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS orders (
+    id INTEGER PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    item_id INTEGER NOT NULL,
+    amount NUMERIC(12,2) NOT NULL,
+    is_payed BOOLEAN NOT NULL DEFAULT FALSE,
+    creation_date TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    payment_date TIMESTAMPTZ
+    );

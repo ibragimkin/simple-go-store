@@ -1,0 +1,53 @@
+info:
+  contact: {}
+paths:
+  /accounts:
+    post:
+      parameters:
+      - description: user id
+        in: query
+        name: user_id
+        required: true
+        type: integer
+      responses:
+        "201":
+          description: Created
+          schema: {}
+  /accounts/{id}:
+    get:
+      description: Возвращает информацию об аккаунте по ID
+      parameters:
+      - description: Account ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+      summary: Получить аккаунт
+      tags:
+      - accounts
+    patch:
+      parameters:
+      - description: account id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: amount
+        in: query
+        name: amount
+        required: true
+        type: number
+      responses:
+        "200":
+          description: OK
+          schema: {}
+swagger: "2.0"
