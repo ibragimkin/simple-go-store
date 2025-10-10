@@ -1,6 +1,6 @@
 # Интернет-магазин
 ## Технологии
-* **Go**
+* **Go 1.25**
 * **Docker / Docker Compose**
 * **PostgreSQL**
 * **Kafka**
@@ -17,9 +17,13 @@
 - **api-gateway**:
 Единая точка входа для клиентских запросов.
 
-Вся программа запускается через `docker-compose up`
+Все данные сохраняются в базу данных (PostgreSQL). Сервисы общаются между собой через Kafka.
 
-## API Endpoints:
-**payment-service**:
+Все API описаны и доступны через Swagger UI, покрывая все эндпоинты.
+- payment-service: /swagger/payment
+- order-service: /swagger/order
 
-- `POST /accounts?user_id={id}` - 
+## Настройка и запуск
+Все настройки конфигурации устанавливаются через переменные окружения (в `docker-compose.yml`).
+
+Запуск всей программы осуществляется одной командой `docker-compose up`
