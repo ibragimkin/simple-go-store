@@ -71,7 +71,7 @@ func (h *AccountHandler) Deposit(w http.ResponseWriter, r *http.Request) {
 
 	err = h.accountService.Deposit(h.ctx, id, depositRequest.Amount)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 	w.WriteHeader(http.StatusOK)
@@ -92,7 +92,7 @@ func (h *AccountHandler) CreateAccount(w http.ResponseWriter, r *http.Request) {
 	}
 	account, err := h.accountService.CreateAccount(h.ctx, createRequest.UserId)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusConflict)
 		return
 	}
 	err = json.NewEncoder(w).Encode(account)
@@ -116,7 +116,7 @@ func (h *AccountHandler) GetUsersAccount(w http.ResponseWriter, r *http.Request)
 	}
 	account, err := h.accountService.GetUsersAccount(h.ctx, userId)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 	err = json.NewEncoder(w).Encode(account)

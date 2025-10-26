@@ -5,13 +5,17 @@ import (
 	"time"
 )
 
+// Account представляет счёт пользователя.
+// Хранит информацию о текущем балансе и дате создания.
 type Account struct {
-	Id           int       `json:"id"`      // TODO: change to go-uuid
-	UserId       int       `json:"user_id"` // TODO: change to go-uuid
-	Balance      float64   `json:"balance"`
-	CreationDate time.Time `json:"creation_date"`
+	Id           int       `json:"id"`            // Уникальный идентификатор счёта
+	UserId       int       `json:"user_id"`       // Идентификатор пользователя, которому принадлежит счёт
+	Balance      float64   `json:"balance"`       // Текущий баланс счёта
+	CreationDate time.Time `json:"creation_date"` // Дата создания счёта
 }
 
+// Deposit увеличивает баланс счёта на указанную сумму.
+// Возвращает ошибку, если сумма отрицательная.
 func (a *Account) Deposit(amount float64) error {
 	if amount < 0 {
 		return fmt.Errorf("amount must be not negative")
@@ -20,6 +24,8 @@ func (a *Account) Deposit(amount float64) error {
 	return nil
 }
 
+// Withdraw уменьшает баланс счёта на указанную сумму.
+// Возвращает ошибку, если сумма отрицательная или средств недостаточно.
 func (a *Account) Withdraw(amount float64) error {
 	if amount < 0 {
 		return fmt.Errorf("amount must be not negative")

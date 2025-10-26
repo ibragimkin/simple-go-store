@@ -6,15 +6,17 @@ import (
 	"strings"
 )
 
+// Config содержит все конфигурационные параметры приложения
 type Config struct {
-	HttpPort           string
-	DatabaseURL        string
-	KafkaBrokers       []string
-	KafkaConsumerTopic string
-	KafkaProducerTopic string
-	KafkaGroupID       string
+	HttpPort           string   // Порт для HTTP сервера
+	DatabaseURL        string   // URL для подключения к базе данных
+	KafkaBrokers       []string // Список брокеров Kafka
+	KafkaConsumerTopic string   // Топик для потребления сообщений
+	KafkaProducerTopic string   // Топик для производства сообщений
+	KafkaGroupID       string   // Group ID для Kafka consumer
 }
 
+// mustGetEnv получает значение обязательной переменной окружения или возвращает ошибку если она пустая
 func mustGetEnv(key string) (string, error) {
 	value := os.Getenv(key)
 	if value == "" {
@@ -23,6 +25,8 @@ func mustGetEnv(key string) (string, error) {
 	return value, nil
 }
 
+// LoadConfig загружает конфигурацию из переменных окружения и возвращает Config
+// Возвращает ошибку если какие-то обязательные переменные не установлены
 func LoadConfig() (*Config, error) {
 	errs := make([]string, 0)
 
