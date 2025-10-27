@@ -41,7 +41,7 @@ func (h *OrderHandler) CreateOrder(w http.ResponseWriter, r *http.Request) {
 
 	order, err := h.orderService.CreateOrder(h.ctx, orderRequest.UserID, orderRequest.ItemID, orderRequest.Price)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	err = json.NewEncoder(w).Encode(order)
@@ -62,7 +62,7 @@ func (h *OrderHandler) GetOrder(w http.ResponseWriter, r *http.Request) {
 	}
 	order, err := h.orderService.GetById(h.ctx, orderId)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 	err = json.NewEncoder(w).Encode(order)
@@ -84,11 +84,11 @@ func (h *OrderHandler) PayOrder(w http.ResponseWriter, r *http.Request) {
 	}
 	order, err := h.orderService.GetById(h.ctx, id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 	if order.IsPayed {
-		http.Error(w, "order is payed", http.StatusBadRequest)
+		http.Error(w, "order is already payed", http.StatusConflict)
 		return
 	}
 
@@ -129,7 +129,7 @@ func (h *OrderHandler) GetUserOrders(w http.ResponseWriter, r *http.Request) {
 	}
 	orders, err := h.orderService.GetUserOrders(h.ctx, userId)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 	err = json.NewEncoder(w).Encode(orders)

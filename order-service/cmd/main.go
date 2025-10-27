@@ -52,7 +52,7 @@ func main() {
 	mux.Handle("/swagger/order/", httpSwagger.WrapHandler)
 
 	server := &http.Server{Addr: ":" + cfg.HttpPort, Handler: mux}
-	log.Printf("Listening on port " + cfg.HttpPort)
+	log.Printf("Listening on port: %s", cfg.HttpPort)
 	err = server.ListenAndServe()
 	if err != nil {
 		log.Fatalf("failed to start http server: %v", err)
